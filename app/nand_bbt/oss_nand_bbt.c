@@ -13,5 +13,5 @@
  *
  */
 
-#include "nand_bbt.h"
+#include "oss_nand_bbt.h"
 
