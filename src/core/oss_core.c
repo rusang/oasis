@@ -10,18 +10,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
+#ifndef OASIS_H
+
+#define OASIS_H
+
+#include <oasis.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
-int main(int argc, const char *argv[])
-{
-    
-    return 0;
-}
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif /* end of include guard: OASIS_H */
