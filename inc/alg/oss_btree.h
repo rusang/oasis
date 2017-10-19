@@ -13,22 +13,5 @@
  *
  */
 
-#ifndef __OSS_CORE_H__
+#include "oss_alg.h"
 
-#define __OSS_CORE_H__
-
-#include <oss_common.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* end of include guard: __OSS_CORE_H__*/

@@ -53,7 +53,7 @@ typedef bool oss_bool;
 #define ass_null ((void*)0)
 
 /* return value */
-typedef enum _OSS_RTN_CODE{
+typedef enum _OSS_RTN_CODE {
 
 	OSS_RTN_SUCCESS = 0,
 
@@ -63,7 +63,7 @@ typedef enum _OSS_RTN_CODE{
 
 	OSS_RTN_UNDEFINE = -1
 
-}OSS_RTN_CODE;
+} OSS_RTN_CODE;
 
 
 #ifdef __cplusplus

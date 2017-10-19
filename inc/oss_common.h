@@ -28,7 +28,7 @@ extern "C" {
 
 #ifdef __OSS_DEBUG__
 #define OSS_DEBUG(fmt, args...) printf("[%s:%d] " fmt "\n",   \
-		__FUNCTION__, __LINE__ , ## args)
+                                       __FUNCTION__, __LINE__ , ## args)
 #else
 #define OSS_DEBUG(fmt, args...)  do {} while(0)
 #endif
@@ -39,7 +39,7 @@ extern "C" {
 	do{\
 		printf("###########ERROR INFO:\n");\
 		printf("[%s:%s:%d] " fmt "\n",   \
-				__FILE__, __FUNCTION__, __LINE__ , ## args);\
+		       __FILE__, __FUNCTION__, __LINE__ , ## args);\
 	}while(0)
 #else
 #define OSS_ERROR(fmt, args...)  do {} while(0)
@@ -53,7 +53,7 @@ extern "C" {
 #define OSS_ASSERT(expr) \
 	if(!(expr)) { \
 		printf( "Assertion failed! %s,%s,%s,line=%d\n",\
-#expr,__FILE__,__func__,__LINE__); \
+		        #expr,__FILE__,__func__,__LINE__); \
 		while(1)   \
 			oss_sleep(50); \
 	}
@@ -67,17 +67,17 @@ extern "C" {
 #ifdef __OSS_DEBUG__
 #define OSS_DUMP(pmt,addr,len) \
 	do  \
-{ \
-	oss_uint32 i = 1; \
-	oss_uint8 *src_ = addr; \
-	for (i = 1; i <= len; i++) \
-	{       \
-		printf("%s\n",pmt);   \
-		printf("0x%x	", *src_++); \
-		if(0 == i%16)       \
-		printf("\n");   \
-	}                   \
-} while (0)
+	{ \
+		oss_uint32 i = 1; \
+		oss_uint8 *src_ = addr; \
+		for (i = 1; i <= len; i++) \
+		{       \
+			printf("%s\n",pmt);   \
+			printf("0x%x	", *src_++); \
+			if(0 == i%16)       \
+				printf("\n");   \
+		}                   \
+	} while (0)
 #else
 #define OSS_DUMP(pmt,addr, len)  do {} while(0)
 #endif
@@ -90,9 +90,9 @@ extern "C" {
 #define oss_leave(x)   do {} while (0)
 #endif
 
-#define OSS_STATIC      static
+#define oss_static      static
 
-#define OSS_INLINE      inline
+#define oss_inline      inline
 
 #ifndef oss_likely
 #define oss_likely(x)    (x)
@@ -127,9 +127,9 @@ extern "C" {
 #define OSS_ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 #ifdef __GNUC__
-#define OSS_TYPEOF(x) (__typeof__(x))
+#define oss_typeof(x) (__typeof__(x))
 #else
-#define OSS_TYPEOF(x)
+#define oss_typeof(x)
 #endif
 
 /*
@@ -137,7 +137,7 @@ extern "C" {
  */
 #define oss_alias(name, aliasname) _oss_alias (name, aliasname)
 #define _oss_alias(name, aliasname) \
-  extern __typeof (name) aliasname __attribute__ ((alias (#name)));
+	extern __typeof (name) aliasname __attribute__ ((alias (#name)));
 
 #ifdef __cplusplus
 }

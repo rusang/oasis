@@ -51,8 +51,12 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# sourceinsight swap files
+*oasis_project
+
 # swap files
 *tags
 *.taghl
 *.swp
 *.out
+
