@@ -50,7 +50,7 @@ typedef unsigned char oss_uint8;
 typedef char oss_sint8;
 typedef bool oss_bool;
 
-#define ass_null ((void*)0)
+#define OSS_NULL ((void*)0)
 
 /* return value */
 typedef enum _OSS_RTN_CODE {

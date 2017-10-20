@@ -28,7 +28,7 @@ extern "C" {
 
 #ifdef __OSS_DEBUG__
 #define OSS_DEBUG(fmt, args...) printf("[%s:%d] " fmt "\n",   \
-                                       __FUNCTION__, __LINE__ , ## args)
+		__FUNCTION__, __LINE__ , ## args)
 #else
 #define OSS_DEBUG(fmt, args...)  do {} while(0)
 #endif
@@ -39,7 +39,7 @@ extern "C" {
 	do{\
 		printf("###########ERROR INFO:\n");\
 		printf("[%s:%s:%d] " fmt "\n",   \
-		       __FILE__, __FUNCTION__, __LINE__ , ## args);\
+				__FILE__, __FUNCTION__, __LINE__ , ## args);\
 	}while(0)
 #else
 #define OSS_ERROR(fmt, args...)  do {} while(0)
@@ -53,7 +53,7 @@ extern "C" {
 #define OSS_ASSERT(expr) \
 	if(!(expr)) { \
 		printf( "Assertion failed! %s,%s,%s,line=%d\n",\
-		        #expr,__FILE__,__func__,__LINE__); \
+#expr,__FILE__,__func__,__LINE__); \
 		while(1)   \
 			oss_sleep(50); \
 	}
@@ -138,6 +138,37 @@ extern "C" {
 #define oss_alias(name, aliasname) _oss_alias (name, aliasname)
 #define _oss_alias(name, aliasname) \
 	extern __typeof (name) aliasname __attribute__ ((alias (#name)));
+
+void *oss_malloc(oss_uint32 length);
+
+void oss_free(oss_uint8 **ptr);
+
+/*
+ * @Brief: allocate @length bytes,and return @align bytes align address
+ *
+ *
+ * @Parameter[in]      length                = Need to allocate size
+ *
+ * @Parameter[in]      align                 = Need to align size
+ *
+ * @Return             @align align address  = Allocate success
+ *
+ * @Return             NULL                  = Allocate failed
+ *
+ */
+void *oss_align_malloc(oss_uint32 length, oss_uint32 align);
+
+/*
+ * @Brief: free allocated buffer malloced by @oss_align_malloc
+ *
+ *
+ * @Parameter[in]      **ptr                 = Need to free buffer address
+ *
+ * @Return             No return
+ *
+ */
+void oss_align_free(oss_uint8 **ptr);
+
 
 #ifdef __cplusplus
 }

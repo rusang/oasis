@@ -13,9 +13,8 @@
  *
  */
 
-#ifndef __OSS_CORE_H__
-
-#define __OSS_CORE_H__
+#ifndef __OASS_MISC_H__
+#define __OASS_MISC_H__
 
 #include <oss_common.h>
 
@@ -25,10 +24,9 @@ extern "C" {
 
 
 
-
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* end of include guard: __OSS_CORE_H__*/
+#endif /* __OASS_MISC_H__ */
+
