@@ -1,0 +1,1 @@
+#define SOFTWARE_VERSION "0.1"

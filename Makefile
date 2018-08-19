@@ -1,43 +1,78 @@
-# Top level makefile, the real shit is at src/Makefile
+VERSION = 0.1
 
-CFLAGS?=	-Wall -Werror -ggdb -W -O
-CC?=		gcc
-LIBS?=
-LDFLAGS?=
-PREFIX?=	/usr/local
-VERSION=0.1
-TMPDIR=/tmp/webbench-$(VERSION)
+# Generating file version.h if current version has changed
+VERSION_FILE := inc/version.h
+SOFTWARE_VERSION:=$(shell git describe 2>/dev/null || echo '$(VERSION)')
+VERSION_H := $(shell cat $(VERSION_FILE) 2>/dev/null)
+ifneq ($(lastword $(VERSION_H)),"$(SOFTWARE_VERSION)")
+$(info $(shell echo   '       GEN  '$(VERSION_FILE)))
+$(shell echo '#define SOFTWARE_VERSION "$(SOFTWARE_VERSION)"' > $(VERSION_FILE))
+endif
 
-all:   webbench tags
+CC           = gcc
+LD           = gcc
+AR           = ar
+OBJDUMP      = objdump
 
-tags:  *.c
-	-ctags *.c
+SOURCES      = src
+INCLUDE      = inc
 
-install: webbench
-	install -s webbench $(DESTDIR)$(PREFIX)/bin	
-	install -m 644 webbench.1 $(DESTDIR)$(PREFIX)/man/man1	
-	install -d $(DESTDIR)$(PREFIX)/share/doc/webbench
-	install -m 644 debian/copyright $(DESTDIR)$(PREFIX)/share/doc/webbench
-	install -m 644 debian/changelog $(DESTDIR)$(PREFIX)/share/doc/webbench
+# find all c files
+CFILES       = $(shell find $(SOURCES) -type f -iname '*.c')
+COBJS        = $(foreach cfile, $(basename $(CFILES)), $(cfile).o)
+OBJS         = $(COBJS)
 
-webbench: webbench.o Makefile
-	$(CC) $(CFLAGS) $(LDFLAGS) -o webbench webbench.o $(LIBS) 
+EXE          = src/test
+
+CFLAGS       = -Wall -Werror -g -Os -I$(INCLUDE)
+
+DEPS_CFLAGS  = -MMD -MP -MF .deps/$*.d
+
+ALL_CFLAGS   = $(CFLAGS) $(DEPS_CFLAGS)
+
+all: $(EXE)
+
+debug:
+	$(Q)echo "$(CFILES)"
+	$(Q)echo "$(OBJS)"
+	# $(QUIET_DUMP)$(OBJDUMP) -D $(EXE) > $(EXE).dis
+
+$(EXE): $(OBJS)
+
+%: %.o
+	$(QUIET_LINK)$(LD) $(CFLAGS) $^ -o $@
+
+%.o: %.c
+	$(Q)mkdir -p .deps/$(*D)
+	$(QUIET_CC)$(CC) $(ALL_CFLAGS) -c -o $@ $<
+
+-include $(OBJS:%.o=.deps/%.d)
 
 clean:
-	-rm -f *.o webbench *~ core *.core tags
-	
-tar:   clean
-	-debian/rules clean
-	rm -rf $(TMPDIR)
-	install -d $(TMPDIR)
-	cp -p Makefile webbench.c socket.c webbench.1 $(TMPDIR)
-	install -d $(TMPDIR)/debian
-	-cp -p debian/* $(TMPDIR)/debian
-	ln -sf debian/copyright $(TMPDIR)/COPYRIGHT
-	ln -sf debian/changelog $(TMPDIR)/ChangeLog
-	-cd $(TMPDIR) && cd .. && tar cozf webbench-$(VERSION).tar.gz webbench-$(VERSION)
+	$(Q)$(RM) -r .deps
+	$(Q)$(RM) $(OBJS) $(EXE) $(EXE).dis
 
-webbench.o:	webbench.c socket.c Makefile
+distclean: clean
 
-.PHONY: clean install all tar
+.PHONY: all debug clean distclean
+
+# quiet and pretty print
+V			= @
+Q			= $(V:1=)
+QUIET_CC		= $(Q:@=@echo    '        CC  '$@;)
+QUIET_LINK		= $(Q:@=@echo    '      LINK  '$@;)
+QUIET_GEN		= $(Q:@=@echo    '       GEN  '$@;)
+QUIET_ASCIIDOC		= $(Q:@=@echo    '  ASCIIDOC  '$@;)
+QUIET_XMLTO		= $(Q:@=@echo    '     XMLTO  '$@;)
+QUIET_DB2PDF		= $(Q:@=@echo    '    DB2PDF  '$@;)
+QUIET_DUMP		= $(Q:@=@echo    '      DUMP  '$<;)
+# tools/install.sh will print 'file -> $install_dir/file'
+QUIET_INSTALL		= $(Q:@=@printf  '   INSTALL  ';)
+QUIET_INSTALL_EACH	= $(Q:@=printf   '   INSTALL  ';)
+QUIET_UNINSTALL		= $(Q:@=@printf  ' UNINSTALL  ';)
+QUIET_UNINSTALL_EACH	= $(Q:@=printf   ' UNINSTALL  ';)
+QUIET_TEST		= $(Q:@=@echo    '      TEST  '$@;)
+QUIET_SUMMARY		= $(Q:@=@printf  '   SUMMARY  ';)
+QUIET_LCOV		= $(Q:@=@echo    '      LCOV  '$@;)
+QUIET_GENHTML		= $(Q:@=@echo    '   GENHTML  '$@;)
 
