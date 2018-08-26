@@ -30,10 +30,10 @@ void oss_free(oss_uint8 **ptr)
 
 void *oss_align_malloc(oss_uint32 length, oss_uint32 align)
 {
-
+	return malloc(length);
 }
 
 void oss_align_free(oss_uint8 **ptr)
 {
-
+	free(*ptr);
 }

@@ -48,7 +48,11 @@ typedef int oss_sint32;
 typedef long oss_sint64;
 typedef unsigned char oss_uint8;
 typedef char oss_sint8;
-typedef bool oss_bool;
+
+typedef enum {
+	FALSE = 0,
+	TRUE = 1,
+}oss_bool;
 
 #define OSS_NULL ((void*)0)
 

@@ -1,50 +1,64 @@
-VERSION = 0.1
+DIST_VERSION      = 0.1
+
+ifneq (,$(wildcard .git))
+GITDESC           = $(subst tig-,,$(shell git describe 2>/dev/null))
+COMMIT           := $(if $(GITDESC),$(GITDESC),$(DIST_VERSION)-$(shell git describe --always))
+WTDIRTY           = $(if $(shell git diff-index HEAD 2>/dev/null),-dirty)
+VERSION           = $(COMMIT)$(WTDIRTY)
+endif
+ifdef RELEASE_BUILD
+VERSION           = $(DIST_VERSION)
+endif
 
 # Generating file version.h if current version has changed
-VERSION_FILE := inc/version.h
-SOFTWARE_VERSION:=$(shell git describe 2>/dev/null || echo '$(VERSION)')
-VERSION_H := $(shell cat $(VERSION_FILE) 2>/dev/null)
+VERSION_FILE     := inc/version.h
+SOFTWARE_VERSION := $(shell git describe 2>/dev/null || echo '$(VERSION)')
+VERSION_H        := $(shell cat $(VERSION_FILE) 2>/dev/null)
 ifneq ($(lastword $(VERSION_H)),"$(SOFTWARE_VERSION)")
 $(info $(shell echo   '       GEN  '$(VERSION_FILE)))
 $(shell echo '#define SOFTWARE_VERSION "$(SOFTWARE_VERSION)"' > $(VERSION_FILE))
 endif
 
-CC           = gcc
-LD           = gcc
-AR           = ar
-OBJDUMP      = objdump
+# override CPPFLAGS += '-DTIG_VERSION="$(VERSION)"'
 
-SOURCES      = src
-INCLUDE      = inc
+CC_TOOL           = gcc
+LD_TOOL           = gcc
+AR_TOOL           = ar
+OBJDUMP_TOOL      = objdump
+
+CC                = $(QUIET_CC)$(CC_TOOL)
+LD                = $(QUIET_LD)$(LD_TOOL)
+OBJDUMP           = $(QUIET_DUMP)$(OBJDUMP_TOOL)
+
+SOURCES           = src
+INCLUDE           = inc
 
 # find all c files
-CFILES       = $(shell find $(SOURCES) -type f -iname '*.c')
-COBJS        = $(foreach cfile, $(basename $(CFILES)), $(cfile).o)
-OBJS         = $(COBJS)
+CFILES            = $(shell find $(SOURCES) -type f -iname '*.c')
+COBJS             = $(foreach cfile, $(basename $(CFILES)), $(cfile).o)
+OBJS              = $(COBJS)
 
-EXE          = src/test
+EXE               = src/test
 
-CFLAGS       = -Wall -Werror -g -Os -I$(INCLUDE)
+CFLAGS            = -Wall -Werror -g -Os -I$(INCLUDE)
 
-DEPS_CFLAGS  = -MMD -MP -MF .deps/$*.d
+DEPS_CFLAGS       = -MMD -MP -MF .deps/$*.d
 
-ALL_CFLAGS   = $(CFLAGS) $(DEPS_CFLAGS)
+ALL_CFLAGS        = $(CFLAGS) $(DEPS_CFLAGS)
 
 all: $(EXE)
 
-debug:
-	$(Q)echo "$(CFILES)"
-	$(Q)echo "$(OBJS)"
-	# $(QUIET_DUMP)$(OBJDUMP) -D $(EXE) > $(EXE).dis
+debug: $(EXE)
+	$(OBJDUMP) -D $(EXE) > $(EXE).dis
 
 $(EXE): $(OBJS)
 
 %: %.o
-	$(QUIET_LINK)$(LD) $(CFLAGS) $^ -o $@
+	$(LD) $(CFLAGS) $^ -o $@
 
 %.o: %.c
 	$(Q)mkdir -p .deps/$(*D)
-	$(QUIET_CC)$(CC) $(ALL_CFLAGS) -c -o $@ $<
+	$(CC) $(ALL_CFLAGS) -c -o $@ $<
 
 -include $(OBJS:%.o=.deps/%.d)
 
@@ -60,7 +74,7 @@ distclean: clean
 V			= @
 Q			= $(V:1=)
 QUIET_CC		= $(Q:@=@echo    '        CC  '$@;)
-QUIET_LINK		= $(Q:@=@echo    '      LINK  '$@;)
+QUIET_LD		= $(Q:@=@echo    '        LD  '$@;)
 QUIET_GEN		= $(Q:@=@echo    '       GEN  '$@;)
 QUIET_ASCIIDOC		= $(Q:@=@echo    '  ASCIIDOC  '$@;)
 QUIET_XMLTO		= $(Q:@=@echo    '     XMLTO  '$@;)

@@ -22,18 +22,18 @@
 extern "C" {
 #endif
 
-typedef struct oss_btree_node {
+typedef struct oss_btree_node_s {
 	oss_element data;
-	oss_btree_node *left;
-	oss_btree_node *right;
-} oss_btree_node;
+	struct oss_btree_node_s *left;
+	struct oss_btree_node_s *right;
+} oss_btree_node_t;
 
 typedef struct oss_btree {
-	oss_btree_node *root;
+	oss_btree_node_t *root;
 	oss_uint32 count;
 } oss_btree;
 
-typedef oss_btree_node *oss_btree_node_ptr;
+typedef oss_btree_node_t *oss_btree_node_ptr;
 
 typedef oss_btree *oss_btree_ptr;
 
